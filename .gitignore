@@ -39,3 +39,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Local scripts
+download_assets.js
+download_link_icon.js
+test-scraper.js
+debug-lib.js

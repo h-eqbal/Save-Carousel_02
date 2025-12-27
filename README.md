@@ -1,36 +1,47 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# SaveCarousels Export App
 
-## Getting Started
+A pixel-perfect Next.js web application that fetches Instagram carousel posts and exports them as PDF or PNG (ZIP) files.
 
-First, run the development server:
+## Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- **Instagram Carousel Fetch**: Input a URL to retrieve carousel images.
+- **Preview**: View all slides before exporting.
+- **PDF Export**: Generate a single PDF document with all slides.
+- **PNG Export**: Download all slides as a ZIP archive.
+- **Responsive Design**: Matches the Figma design perfectly.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Tech Stack
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Framework**: Next.js 15 (App Router)
+- **Styling**: Tailwind CSS v4
+- **Language**: TypeScript
+- **PDF Generation**: `pdf-lib`
+- **ZIP Creation**: `jszip`
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Setup
 
-## Learn More
+1. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-To learn more about Next.js, take a look at the following resources:
+2. Run the development server:
+   ```bash
+   npm run dev
+   ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+3. Open [http://localhost:3000](http://localhost:3000) with your browser.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Architecture
 
-## Deploy on Vercel
+- `src/app/page.tsx`: Main entry point.
+- `src/components/Hero.tsx`: Handles URL input and export logic.
+- `src/app/api/fetch-carousel`: API route for fetching data (currently using mock data for stability).
+- `src/app/api/export/*`: API routes for generating binary files.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Integration
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+To enable real Instagram fetching:
+1. Open `src/app/api/fetch-carousel/route.ts`.
+2. Uncomment the `instagram-url-direct` logic.
+3. Ensure you have proper network access/proxies if required.
