@@ -21,8 +21,25 @@ export async function POST(request: Request) {
         let targetUrl = normalizedInput.replace(/instagr\.am/i, 'instagram.com');
 
         try {
-            // Attempt to fetch real data
-            const response = await instagramGetUrl(targetUrl);
+            // Attempt to fetch real data with retry logic
+            let response;
+            let attempts = 0;
+            const maxAttempts = 3;
+
+            while (attempts < maxAttempts) {
+                try {
+                    response = await instagramGetUrl(targetUrl);
+                    if (response && (response.url_list?.length > 0 || response.results_number > 0)) {
+                        break; // Success
+                    }
+                } catch (e) {
+                    console.warn(`Attempt ${attempts + 1} failed:`, e);
+                }
+                attempts++;
+                if (attempts < maxAttempts) {
+                    await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1s between retries
+                }
+            }
 
             if (response && response.url_list && response.url_list.length > 0) {
                 return NextResponse.json({
