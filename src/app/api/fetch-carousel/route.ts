@@ -1,20 +1,6 @@
 import { NextResponse } from 'next/server';
 import { instagramGetUrl } from 'instagram-url-direct';
 
-// Mock data fallback
-const MOCK_DATA = {
-    id: '123456789',
-    images: [
-        'https://picsum.photos/1080/1080?random=1',
-        'https://picsum.photos/1080/1080?random=2',
-        'https://picsum.photos/1080/1080?random=3',
-        'https://picsum.photos/1080/1080?random=4',
-        'https://picsum.photos/1080/1080?random=5',
-    ],
-    caption: 'This is a beautiful carousel from Instagram #awesome #slides',
-    timestamp: Date.now(),
-};
-
 export async function POST(request: Request) {
     try {
         const { url } = await request.json();
@@ -31,10 +17,8 @@ export async function POST(request: Request) {
         console.log('Fetching URL:', normalizedInput);
 
         // Replace instagr.am with instagram.com for the library if needed
-        let targetUrl = normalizedInput;
-        if (targetUrl.includes('instagr.am')) {
-            targetUrl = targetUrl.replace('instagr.am', 'instagram.com');
-        }
+        // Use regex for case-insensitive replacement of the domain
+        let targetUrl = normalizedInput.replace(/instagr\.am/i, 'instagram.com');
 
         try {
             // Attempt to fetch real data
@@ -68,12 +52,11 @@ export async function POST(request: Request) {
             throw new Error('No images found in response');
 
         } catch (fetchError) {
-            console.error('Real fetch failed, falling back to mock:', fetchError);
-            // Fallback to mock data for demonstration if scraping fails (common due to rate limits)
+            console.error('Fetch failed:', fetchError);
+            // Return actual error instead of mock data
             return NextResponse.json({
-                success: true,
-                data: MOCK_DATA
-            });
+                error: 'Failed to fetch content from Instagram. The link might be private, invalid, or the service is temporarily unavailable.'
+            }, { status: 400 });
         }
 
     } catch (error) {
