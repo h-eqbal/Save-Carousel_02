@@ -7,7 +7,7 @@ import { cn } from '@/utils/cn';
 import axios from 'axios';
 
 interface HeroProps {
-    onDataLoaded?: (data: any) => void;
+    onDataLoaded?: (data: unknown) => void;
 }
 
 // function to trigger download from blob
@@ -105,7 +105,7 @@ export default function Hero({ onDataLoaded }: HeroProps) {
             {/* Card Section */}
             <div className="bg-white rounded-[20px] shadow-[0px_4px_24px_rgba(0,0,0,0.08)] p-[50px] w-full max-w-[800px] flex flex-col items-center gap-[40px] border border-[#d9d9d9]">
                 <h3 className="font-serif text-[32px] text-center text-black max-w-[500px] leading-snug">
-                    Hey there! Let's turn your link into some awesome slides!
+                    Hey there! Let&rsquo;s turn your link into some awesome slides!
                 </h3>
 
                 <div className="w-full flex flex-col gap-[30px]">

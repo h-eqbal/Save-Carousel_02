@@ -12,6 +12,11 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    "debug-lib.js",
+    "download_assets.js",
+    "download_link_icon.js",
+    "test-scraper.js",
+    "public/**",
   ]),
 ]);
 

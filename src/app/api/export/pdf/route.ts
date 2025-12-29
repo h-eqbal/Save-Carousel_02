@@ -32,6 +32,7 @@ export async function POST(request: Request) {
 
         const pdfBytes = await pdfDoc.save();
 
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         return new NextResponse(new Blob([pdfBytes as any]), {
             headers: {
                 'Content-Type': 'application/pdf',
@@ -39,7 +40,7 @@ export async function POST(request: Request) {
             },
         });
 
-    } catch (error) {
+    } catch (error: unknown) {
         console.error('PDF Generation Error:', error);
         return NextResponse.json({ error: 'Failed to generate PDF' }, { status: 500 });
     }

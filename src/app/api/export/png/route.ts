@@ -30,6 +30,7 @@ export async function POST(request: Request) {
 
         const zipContent = await zip.generateAsync({ type: 'uint8array' });
 
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         return new NextResponse(new Blob([zipContent as any]), {
             headers: {
                 'Content-Type': 'application/zip',
@@ -37,7 +38,7 @@ export async function POST(request: Request) {
             },
         });
 
-    } catch (error) {
+    } catch (error: unknown) {
         console.error('PNG/ZIP Export Error:', error);
         return NextResponse.json({ error: 'Failed to generate ZIP' }, { status: 500 });
     }
