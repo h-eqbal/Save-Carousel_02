@@ -1,6 +1,4 @@
-'use client';
-
-import React, { useState } from 'react';
+import React, { Suspense } from 'react';
 import Header from '@/components/ui/Header';
 import Footer from '@/components/ui/Footer';
 import Hero from '@/components/Hero';
@@ -13,7 +11,9 @@ export default function Home() {
       <Header />
 
       <div className="flex flex-col gap-[100px] w-full max-w-[1440px] items-center">
-        <Hero />
+        <Suspense fallback={<div className="h-[400px] flex items-center justify-center">Loading...</div>}>
+          <Hero />
+        </Suspense>
         <Features />
         <HowItWorks />
       </div>
