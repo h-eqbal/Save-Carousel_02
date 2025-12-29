@@ -70,7 +70,6 @@ export async function POST(request: Request) {
 
         } catch (fetchError) {
             console.error('Fetch failed:', fetchError);
-            // Return actual error instead of mock data
             return NextResponse.json({
                 error: 'Failed to fetch content from Instagram. The link might be private, invalid, or the service is temporarily unavailable.'
             }, { status: 400 });
