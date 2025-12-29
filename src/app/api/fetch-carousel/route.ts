@@ -19,15 +19,26 @@ export async function POST(request: Request) {
     try {
         const { url } = await request.json();
 
-        if (!url || !url.includes('instagram.com/')) {
+        // Normalize URL: trim and lowercase for checking
+        const normalizedInput = url ? url.trim() : '';
+        const lowerUrl = normalizedInput.toLowerCase();
+
+        // Check for instagram.com or instagr.am
+        if (!lowerUrl.includes('instagram.com/') && !lowerUrl.includes('instagr.am/')) {
             return NextResponse.json({ error: 'Invalid URL. Please use a valid Instagram post link.' }, { status: 400 });
         }
 
-        console.log('Fetching URL:', url);
+        console.log('Fetching URL:', normalizedInput);
+
+        // Replace instagr.am with instagram.com for the library if needed
+        let targetUrl = normalizedInput;
+        if (targetUrl.includes('instagr.am')) {
+            targetUrl = targetUrl.replace('instagr.am', 'instagram.com');
+        }
 
         try {
             // Attempt to fetch real data
-            const response = await instagramGetUrl(url);
+            const response = await instagramGetUrl(targetUrl);
 
             if (response && response.url_list && response.url_list.length > 0) {
                 return NextResponse.json({
