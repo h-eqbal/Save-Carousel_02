@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import Image from 'next/image';
-import { Link2 } from 'lucide-react';
+import { useSearchParams } from 'next/navigation';
 import { cn } from '@/utils/cn';
 import axios from 'axios';
 
@@ -23,11 +23,16 @@ const downloadBlob = (blob: Blob, filename: string) => {
 };
 
 export default function Hero({ onDataLoaded }: HeroProps) {
-    const [url, setUrl] = useState('');
+    const searchParams = useSearchParams();
+    // Initialize state with 'url' query param if present
+    const [url, setUrl] = useState(searchParams?.get('url') || '');
     const [format, setFormat] = useState<'pdf' | 'png'>('pdf');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [status, setStatus] = useState('');
+
+    // Optional: Auto-start if URL has a specific trigger, but for now just pre-fill is safer
+
 
     const handleDownload = async () => {
         if (!url) {
