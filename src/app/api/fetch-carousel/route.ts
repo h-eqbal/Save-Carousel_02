@@ -1,33 +1,45 @@
 import { NextResponse } from 'next/server';
 import { instagramGetUrl } from 'instagram-url-direct';
 
-// Mock data fallback
-const MOCK_DATA = {
-    id: '123456789',
-    images: [
-        'https://picsum.photos/1080/1080?random=1',
-        'https://picsum.photos/1080/1080?random=2',
-        'https://picsum.photos/1080/1080?random=3',
-        'https://picsum.photos/1080/1080?random=4',
-        'https://picsum.photos/1080/1080?random=5',
-    ],
-    caption: 'This is a beautiful carousel from Instagram #awesome #slides',
-    timestamp: Date.now(),
-};
-
 export async function POST(request: Request) {
     try {
         const { url } = await request.json();
 
-        if (!url || !url.includes('instagram.com/')) {
+        // Normalize URL: trim and lowercase for checking
+        const normalizedInput = url ? url.trim() : '';
+        const lowerUrl = normalizedInput.toLowerCase();
+
+        // Check for instagram.com or instagr.am
+        if (!lowerUrl.includes('instagram.com/') && !lowerUrl.includes('instagr.am/')) {
             return NextResponse.json({ error: 'Invalid URL. Please use a valid Instagram post link.' }, { status: 400 });
         }
 
-        console.log('Fetching URL:', url);
+        console.log('Fetching URL:', normalizedInput);
+
+        // Replace instagr.am with instagram.com for the library if needed
+        // Use regex for case-insensitive replacement of the domain
+        let targetUrl = normalizedInput.replace(/instagr\.am/i, 'instagram.com');
 
         try {
-            // Attempt to fetch real data
-            const response = await instagramGetUrl(url);
+            // Attempt to fetch real data with retry logic
+            let response;
+            let attempts = 0;
+            const maxAttempts = 3;
+
+            while (attempts < maxAttempts) {
+                try {
+                    response = await instagramGetUrl(targetUrl);
+                    if (response && (response.url_list?.length > 0 || response.results_number > 0)) {
+                        break; // Success
+                    }
+                } catch (e) {
+                    console.warn(`Attempt ${attempts + 1} failed:`, e);
+                }
+                attempts++;
+                if (attempts < maxAttempts) {
+                    await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1s between retries
+                }
+            }
 
             if (response && response.url_list && response.url_list.length > 0) {
                 return NextResponse.json({
@@ -57,12 +69,10 @@ export async function POST(request: Request) {
             throw new Error('No images found in response');
 
         } catch (fetchError) {
-            console.error('Real fetch failed, falling back to mock:', fetchError);
-            // Fallback to mock data for demonstration if scraping fails (common due to rate limits)
+            console.error('Fetch failed:', fetchError);
             return NextResponse.json({
-                success: true,
-                data: MOCK_DATA
-            });
+                error: 'Failed to fetch content from Instagram. The link might be private, invalid, or the service is temporarily unavailable.'
+            }, { status: 400 });
         }
 
     } catch (error) {
